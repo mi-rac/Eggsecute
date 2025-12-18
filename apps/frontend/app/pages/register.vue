@@ -71,7 +71,7 @@ async function handleRegister() {
       toast.add({
         title: t('common.error'),
         description: t('auth.registerError'),
-        color: 'red',
+        color: 'error',
       })
       return
     }
@@ -79,7 +79,7 @@ async function handleRegister() {
     toast.add({
       title: t('common.success'),
       description: 'Account created! Please check your email to verify.',
-      color: 'green',
+      color: 'success',
     })
     navigateTo('/login')
   } finally {

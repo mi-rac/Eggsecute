@@ -72,7 +72,7 @@ async function checkHealth() {
     toast.add({
       title: t('common.error'),
       description: 'Could not connect to API',
-      color: 'red',
+      color: 'error',
     })
   } finally {
     checking.value = false

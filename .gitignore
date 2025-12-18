@@ -30,7 +30,7 @@ yarn-error.log*
 *~
 
 # IDE
-.vscode/
+# .vscode/
 .idea/
 *.sublime-*
 
