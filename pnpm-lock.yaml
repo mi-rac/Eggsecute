@@ -54,6 +54,9 @@ importers:
       nuxt:
         specifier: ^4.2.2
         version: 4.2.2(@vue/compiler-sfc@3.5.26)(eslint@9.39.2)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0)
+      tailwindcss:
+        specifier: ^4.1.18
+        version: 4.1.18
       vue:
         specifier: ^3.5.25
         version: 3.5.26(typescript@5.9.3)

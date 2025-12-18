@@ -9,6 +9,8 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase',
   ],
 
+  css: ['~/assets/css/main.css'],
+
   // i18n configuration
   i18n: {
     locales: [
