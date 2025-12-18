@@ -12,7 +12,10 @@ const fastify = Fastify({
 
 // Register plugins
 await fastify.register(cors, {
-  origin: true, // TODO: Configure this properly for production
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://your-production-domain.com'] // TODO: Update for production
+    : ['http://localhost:3001', 'http://127.0.0.1:3001'], // Nuxt dev server
+  credentials: true,
 });
 
 await fastify.register(websocket);

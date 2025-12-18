@@ -1,0 +1,57 @@
+{
+  "app": {
+    "name": "Eggsecute",
+    "tagline": "Multi-language code execution platform"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "loginTitle": "Sign in to your account",
+    "registerTitle": "Create a new account",
+    "loginButton": "Sign In",
+    "registerButton": "Create Account",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loggingIn": "Signing in...",
+    "registering": "Creating account...",
+    "loginError": "Invalid email or password",
+    "registerError": "Could not create account",
+    "passwordMismatch": "Passwords do not match",
+    "logoutSuccess": "You have been logged out"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {email}!",
+    "healthCheck": "Health Check",
+    "checkHealth": "Check API Health",
+    "checking": "Checking...",
+    "healthStatus": "API Status",
+    "healthy": "Healthy",
+    "unhealthy": "Unhealthy",
+    "lastChecked": "Last checked: {time}"
+  },
+  "home": {
+    "title": "Welcome to Eggsecute",
+    "description": "A multi-language code execution, benchmarking, and learning platform.",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit"
+  }
+}
+
