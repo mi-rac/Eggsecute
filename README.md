@@ -1,47 +1,24 @@
-# Code Practice Platform
+# Eggsecute
 
 A multi-language code execution, benchmarking, and learning platform.
 
-## Architecture
+See [architecture.md](.augment/rules/architecture.md) for detailed system design.
 
-- **Frontend**: Nuxt 3 + Nuxt UI + Monaco Editor
-- **Control Plane**: Fastify + TypeScript
-- **Executors**: Python (FastAPI), Node.js (Fastify), C++
-- **Database & Auth**: Supabase
-- **i18n**: English and French
-
-## Project Structure
-
-```
-/
-├── apps/
-│   ├── frontend/          # Nuxt 3 web application
-│   └── control-plane/     # Fastify orchestration service
-├── services/
-│   ├── executor-python/   # Python code executor
-│   ├── executor-node/     # Node.js/TypeScript executor
-│   └── executor-cpp/      # C++ executor
-└── packages/
-    └── shared-types/      # Shared TypeScript types
-```
-
-## Getting Started
-
-### Prerequisites
+## Prerequisites
 
 - Node.js >= 20.0.0
 - pnpm >= 9.0.0
 - Python >= 3.11 (for Python executor)
 - C++ compiler (for C++ executor)
 
-### Installation
+## Quick Start
 
 ```bash
-# Install pnpm if you haven't already
-npm install -g pnpm
-
 # Install dependencies
 pnpm install
+
+# Build shared types (required first time)
+pnpm --filter @code-practice/shared-types build
 
 # Run all services in development mode
 pnpm dev
@@ -53,12 +30,11 @@ pnpm build
 pnpm test
 ```
 
-## Development
+## Workspaces
 
-Each workspace has its own README with specific instructions.
-
-## Monorepo Tools
-
-- **pnpm workspaces**: Package management
-- **Turborepo**: Task orchestration and caching
-
+| Workspace | Status | Description |
+|-----------|--------|-------------|
+| `apps/frontend` | ✅ Ready | Nuxt 3 web application |
+| `apps/control-plane` | ✅ Ready | Fastify orchestration service |
+| `packages/shared-types` | ✅ Ready | Shared TypeScript types |
+| `services/executor-*` | 🚧 Planned | Language-specific executors |
