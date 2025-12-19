@@ -10,16 +10,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.47.10",
-    "fastify": "^5.2.0",
-    "@fastify/websocket": "^11.0.1",
+    "@code-practice/shared-types": "workspace:*",
     "@fastify/cors": "^10.0.1",
-    "dotenv": "^16.4.7"
+    "@fastify/websocket": "^11.0.1",
+    "@supabase/supabase-js": "^2.47.10",
+    "dotenv": "^16.4.7",
+    "fastify": "^5.2.0",
+    "nanoid": "^5.0.9",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/ws": "^8.18.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
 }
-

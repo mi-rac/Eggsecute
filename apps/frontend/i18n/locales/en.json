@@ -6,6 +6,7 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "problems": "Problems",
     "login": "Login",
     "register": "Register",
     "logout": "Logout"
@@ -48,6 +49,43 @@
     "getStarted": "Get Started",
     "learnMore": "Learn More"
   },
+  "problems": {
+    "title": "Problems",
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "solve": "Solve"
+  },
+  "problem": {
+    "description": "Description",
+    "testCases": "Test Cases",
+    "input": "Input",
+    "expected": "Expected",
+    "actual": "Actual",
+    "results": "Results",
+    "submit": "Run Code",
+    "submitting": "Running...",
+    "reset": "Reset"
+  },
+  "execution": {
+    "status": {
+      "idle": "Ready",
+      "compiling": "Compiling...",
+      "running": "Running tests...",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "compileTime": "Compile time",
+    "executionTime": "Execution time",
+    "memoryUsage": "Memory usage",
+    "testsPassed": "{passed} of {total} tests passed",
+    "allTestsPassed": "All tests passed!",
+    "someTestsFailed": "Some tests failed",
+    "passed": "Passed",
+    "failed": "Failed"
+  },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",
@@ -55,7 +93,10 @@
     "cancel": "Cancel",
     "save": "Save",
     "delete": "Delete",
-    "edit": "Edit"
+    "edit": "Edit",
+    "ms": "ms",
+    "bytes": "bytes",
+    "kb": "KB"
   }
 }
 

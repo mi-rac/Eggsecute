@@ -10,6 +10,8 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@code-practice/shared-types": "workspace:*",
+    "@guolao/vue-monaco-editor": "^1.6.0",
     "@nuxt/ui": "^4.3.0",
     "@nuxtjs/i18n": "^10.2.1",
     "@nuxtjs/supabase": "^2.0.3",
