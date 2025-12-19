@@ -8,16 +8,16 @@
       </template>
 
       <UForm :state="state" :validate="validate" @submit="handleRegister" class="space-y-4">
-        <UFormField :label="$t('auth.email')" name="email">
-          <UInput v-model="state.email" type="email" autocomplete="email" />
+        <UFormField :label="$t('auth.email')" name="email" class="w-full">
+          <UInput v-model="state.email" type="email" autocomplete="email" class="w-full" />
         </UFormField>
 
-        <UFormField :label="$t('auth.password')" name="password">
-          <UInput v-model="state.password" type="password" autocomplete="new-password" />
+        <UFormField :label="$t('auth.password')" name="password" class="w-full">
+          <UInput v-model="state.password" type="password" autocomplete="new-password" class="w-full" />
         </UFormField>
 
-        <UFormField :label="$t('auth.confirmPassword')" name="confirmPassword">
-          <UInput v-model="state.confirmPassword" type="password" autocomplete="new-password" />
+        <UFormField :label="$t('auth.confirmPassword')" name="confirmPassword" class="w-full">
+          <UInput v-model="state.confirmPassword" type="password" autocomplete="new-password" class="w-full" />
         </UFormField>
 
         <UButton type="submit" block :loading="loading">
@@ -65,6 +65,9 @@ async function handleRegister() {
     const { error } = await supabase.auth.signUp({
       email: state.email,
       password: state.password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/confirm`,
+      },
     })
 
     if (error) {

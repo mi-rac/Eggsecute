@@ -23,9 +23,13 @@
     "loggingIn": "Signing in...",
     "registering": "Creating account...",
     "loginError": "Invalid email or password",
+    "loginSuccess": "Welcome back!",
     "registerError": "Could not create account",
     "passwordMismatch": "Passwords do not match",
-    "logoutSuccess": "You have been logged out"
+    "logoutSuccess": "You have been logged out",
+    "emailConfirmed": "Email Confirmed!",
+    "emailConfirmedDescription": "Your email has been verified. You can now access your dashboard.",
+    "proceedToApp": "Proceed to App"
   },
   "dashboard": {
     "title": "Dashboard",

@@ -8,12 +8,12 @@
       </template>
 
       <UForm :state="state" :validate="validate" @submit="handleLogin" class="space-y-4">
-        <UFormField :label="$t('auth.email')" name="email">
-          <UInput v-model="state.email" type="email" autocomplete="email" />
+        <UFormField :label="$t('auth.email')" name="email" class="w-full">
+          <UInput v-model="state.email" type="email" autocomplete="email" class="w-full" />
         </UFormField>
 
-        <UFormField :label="$t('auth.password')" name="password">
-          <UInput v-model="state.password" type="password" autocomplete="current-password" />
+        <UFormField :label="$t('auth.password')" name="password" class="w-full">
+          <UInput v-model="state.password" type="password" autocomplete="current-password" class="w-full" />
         </UFormField>
 
         <UButton type="submit" block :loading="loading">
@@ -35,8 +35,16 @@
 
 <script setup lang="ts">
 const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 const { t } = useI18n()
 const toast = useToast()
+
+// Redirect if already logged in
+watchEffect(() => {
+  if (user.value) {
+    navigateTo('/dashboard')
+  }
+})
 
 const loading = ref(false)
 const state = reactive({
@@ -63,11 +71,16 @@ async function handleLogin() {
       toast.add({
         title: t('common.error'),
         description: t('auth.loginError'),
-        color: 'red',
+        color: 'error',
       })
       return
     }
 
+    toast.add({
+      title: t('common.success'),
+      description: t('auth.loginSuccess'),
+      color: 'success',
+    })
     navigateTo('/dashboard')
   } finally {
     loading.value = false

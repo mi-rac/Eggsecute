@@ -12,7 +12,7 @@
               <NuxtLink to="/dashboard">
                 <UButton variant="ghost">{{ $t('nav.dashboard') }}</UButton>
               </NuxtLink>
-              <UButton variant="soft" color="red" @click="handleLogout">
+              <UButton variant="soft" color="error" @click="handleLogout">
                 {{ $t('nav.logout') }}
               </UButton>
             </template>
@@ -46,7 +46,7 @@ async function handleLogout() {
   toast.add({
     title: t('common.success'),
     description: t('auth.logoutSuccess'),
-    color: 'green',
+    color: 'success',
   })
   navigateTo('/')
 }
