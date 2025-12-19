@@ -55,7 +55,7 @@ export const jobRoutes: FastifyPluginAsync = async (fastify) => {
         body: JSON.stringify(executorRequest),
       });
 
-      const result: ExecutorResponse = await response.json();
+      const result: ExecutorResponse = await response.json() as ExecutorResponse;
 
       job.status = result.success ? 'completed' : 'failed';
       job.completedAt = new Date();
