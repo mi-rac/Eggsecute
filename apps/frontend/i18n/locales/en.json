@@ -6,7 +6,7 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "problems": "Problems",
+    "library": "Library",
     "login": "Login",
     "register": "Register",
     "logout": "Logout"
@@ -49,8 +49,8 @@
     "getStarted": "Get Started",
     "learnMore": "Learn More"
   },
-  "problems": {
-    "title": "Problems",
+  "exercises": {
+    "title": "Exercises",
     "difficulty": {
       "easy": "Easy",
       "medium": "Medium",

@@ -6,7 +6,7 @@ import type {
   ExecutorRequest,
   ExecutorResponse,
 } from '@code-practice/shared-types';
-import { getProblem } from '../data/problems.js';
+import { getExerciseById } from '../data/library.js';
 
 const EXECUTOR_URL = process.env.EXECUTOR_NODE_URL || 'http://localhost:3002';
 
@@ -19,7 +19,7 @@ export const jobRoutes: FastifyPluginAsync = async (fastify) => {
     const { problemId, language, code, userId } = request.body;
 
     // Validate problem exists
-    const problem = getProblem(problemId);
+    const problem = getExerciseById(problemId);
     if (!problem) {
       return reply.code(404).send({ error: 'Problem not found' });
     }

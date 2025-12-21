@@ -1,6 +1,6 @@
 import type { Problem } from '@code-practice/shared-types';
 
-export const problems: Record<string, Problem> = {
+export const exercises: Record<string, Problem> = {
   'two-sum': {
     id: 'two-sum',
     title: 'Two Sum',
@@ -96,11 +96,11 @@ Output: ["1", "2", "Fizz", "4", "Buzz"]
   },
 };
 
-export function getProblem(id: string): Problem | undefined {
-  return problems[id];
+export function getExerciseById(id: string): Problem | undefined {
+  return exercises[id];
 }
 
-export function getAllProblems(): Problem[] {
-  return Object.values(problems);
+export function getAllExercises(): Problem[] {
+  return Object.values(exercises);
 }
 

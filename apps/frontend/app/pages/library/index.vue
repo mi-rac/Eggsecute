@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-3xl font-bold mb-6">{{ $t('problems.title') }}</h1>
+    <h1 class="text-3xl font-bold mb-6">{{ $t('exercises.title') }}</h1>
     
     <div v-if="pending" class="flex justify-center py-8">
       <UIcon name="i-heroicons-arrow-path" class="animate-spin h-8 w-8" />
@@ -11,10 +11,10 @@
     </div>
 
     <div v-else class="grid gap-4">
-      <UCard v-for="problem in problems" :key="problem.id" class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+      <UCard v-for="problem in exercises" :key="problem.id" class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
         <div class="flex items-center justify-between">
           <div class="flex-1">
-            <NuxtLink :to="`/problems/${problem.id}`" class="text-xl font-semibold hover:text-primary">
+            <NuxtLink :to="`/exercises/${problem.id}`" class="text-xl font-semibold hover:text-primary">
               {{ problem.title }}
             </NuxtLink>
             <p class="text-gray-600 dark:text-gray-400 mt-1 text-sm">
@@ -26,14 +26,14 @@
               :color="getDifficultyColor(problem.difficulty)"
               variant="subtle"
             >
-              {{ $t(`problems.difficulty.${problem.difficulty}`) }}
+              {{ $t(`exercises.difficulty.${problem.difficulty}`) }}
             </UBadge>
             <UButton
-              :to="`/problems/${problem.id}`"
+              :to="`/exercises/${problem.id}`"
               color="primary"
               variant="soft"
             >
-              {{ $t('problems.solve') }}
+              {{ $t('exercises.solve') }}
             </UButton>
           </div>
         </div>
@@ -45,15 +45,15 @@
 <script setup lang="ts">
 const config = useRuntimeConfig();
 
-interface ProblemSummary {
+interface ExerciseSummary {
   id: string;
   title: string;
   difficulty: 'easy' | 'medium' | 'hard';
   description: string;
 }
 
-const { data: problems, pending, error } = await useFetch<ProblemSummary[]>(
-  `${config.public.apiBaseUrl}/problems`
+const { data: exercises, pending, error } = await useFetch<ExerciseSummary[]>(
+  `${config.public.apiBaseUrl}/library`
 );
 
 function getDifficultyColor(difficulty: string) {

@@ -4,7 +4,7 @@ import cors from '@fastify/cors';
 import websocket from '@fastify/websocket';
 import { supabaseClient } from './lib/supabase.js';
 import { jobRoutes } from './routes/jobs.js';
-import { problemRoutes } from './routes/problems.js';
+import { problemRoutes } from './routes/library.js';
 import { websocketRoutes } from './routes/websocket.js';
 
 const fastify = Fastify({
@@ -71,7 +71,7 @@ const start = async () => {
 
     console.log(`🚀 Control Plane running at http://${host}:${port}`);
     console.log(`📊 Health: http://${host}:${port}/health`);
-    console.log(`📝 Problems: http://${host}:${port}/problems`);
+    console.log(`📝 Library: http://${host}:${port}/library`);
     console.log(`⚡ Jobs: POST http://${host}:${port}/jobs`);
     console.log(`🔌 WebSocket: ws://${host}:${port}/ws`);
   } catch (err) {

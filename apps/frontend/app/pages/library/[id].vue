@@ -16,7 +16,7 @@
             <div class="flex items-center justify-between">
               <h1 class="text-2xl font-bold">{{ problem.title }}</h1>
               <UBadge :color="getDifficultyColor(problem.difficulty)" variant="subtle">
-                {{ $t(`problems.difficulty.${problem.difficulty}`) }}
+                {{ $t(`exercises.difficulty.${problem.difficulty}`) }}
               </UBadge>
             </div>
           </template>
@@ -151,7 +151,7 @@ interface ClientProblem {
 }
 
 const { data: problem, pending, error } = await useFetch<ClientProblem>(
-  `${config.public.apiBaseUrl}/problems/${problemId}`
+  `${config.public.apiBaseUrl}/library/${problemId}`
 );
 
 const defaultCode = computed(() => {
