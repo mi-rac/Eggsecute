@@ -15,7 +15,7 @@ export interface TestCase {
   description?: string;
 }
 
-export interface Problem {
+export interface Exercise {
   id: string;
   title: string;
   description: string;
@@ -31,7 +31,7 @@ export interface Problem {
 // ============================================================================
 
 export interface JobSubmission {
-  problemId: string;
+  exerciseId: string;
   language: SupportedLanguage;
   code: string;
   userId?: string;
@@ -39,7 +39,7 @@ export interface JobSubmission {
 
 export interface Job {
   id: string;
-  problemId: string;
+  exerciseId: string;
   language: SupportedLanguage;
   code: string;
   userId?: string;
@@ -135,7 +135,7 @@ export interface JobCompletedEvent extends WebSocketEvent {
 
 export interface ExecutorRequest {
   jobId: string;
-  problem: Problem;
+  exercise: Exercise;
   code: string;
   language: SupportedLanguage;
 }

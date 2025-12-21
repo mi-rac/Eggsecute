@@ -15,20 +15,20 @@ const jobs = new Map<string, Job>();
 
 export const jobRoutes: FastifyPluginAsync = async (fastify) => {
   // Submit a new job
-  fastify.post<{ Body: JobSubmission }>('/jobs', async (request, reply) => {
-    const { problemId, language, code, userId } = request.body;
+  fastify.post<{ Body: JobSubmission & { jobId?: string } }>('/jobs', async (request, reply) => {
+    const { exerciseId, language, code, userId } = request.body;
 
     // Validate problem exists
-    const problem = getExerciseById(problemId);
-    if (!problem) {
-      return reply.code(404).send({ error: 'Problem not found' });
+    const exercise = getExerciseById(exerciseId);
+    if (!exercise) {
+      return reply.code(404).send({ error: 'Exercise not found' });
     }
 
-    // Create job record
-    const jobId = nanoid();
+    // Use client-provided jobId or generate one
+    const jobId = request.body.jobId || nanoid();
     const job: Job = {
       id: jobId,
-      problemId,
+      exerciseId,
       language,
       code,
       userId,
@@ -44,7 +44,7 @@ export const jobRoutes: FastifyPluginAsync = async (fastify) => {
 
       const executorRequest: ExecutorRequest = {
         jobId,
-        problem,
+        exercise,
         code,
         language,
       };

@@ -104,22 +104,47 @@ export function useExecutionSocket() {
     }
   }
 
-  function subscribe(jobId: string) {
-    if (!socket || socket.readyState !== WebSocket.OPEN) {
-      connect();
-      // Wait for connection then subscribe
-      setTimeout(() => subscribe(jobId), 100);
-      return;
-    }
+  function subscribe(jobId: string): Promise<void> {
+    return new Promise((resolve) => {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        connect();
+        // Wait for connection then subscribe
+        setTimeout(() => {
+          subscribe(jobId).then(resolve);
+        }, 100);
+        return;
+      }
 
-    // Reset state for new job
-    state.status = 'idle';
-    state.compileTimeMs = null;
-    state.testResults = [];
-    state.finalResult = null;
-    state.error = null;
+      // Reset state for new job
+      state.status = 'idle';
+      state.compileTimeMs = null;
+      state.testResults = [];
+      state.finalResult = null;
+      state.error = null;
+      state.jobId = jobId;
 
-    socket.send(JSON.stringify({ type: 'subscribe', jobId }));
+      // Listen for subscription confirmation
+      const onMessage = (event: MessageEvent) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'subscribed' && data.jobId === jobId) {
+            socket?.removeEventListener('message', onMessage);
+            resolve();
+          }
+        } catch {
+          // ignore
+        }
+      };
+      socket.addEventListener('message', onMessage);
+
+      socket.send(JSON.stringify({ type: 'subscribe', jobId }));
+
+      // Timeout fallback
+      setTimeout(() => {
+        socket?.removeEventListener('message', onMessage);
+        resolve();
+      }, 500);
+    });
   }
 
   function disconnect() {

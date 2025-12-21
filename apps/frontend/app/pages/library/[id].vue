@@ -216,14 +216,22 @@ async function submitCode() {
 
   submitting.value = true;
   resetExec();
-  setCompiling();
+
+  // Generate a job ID upfront so we can subscribe before submitting
+  const jobId = crypto.randomUUID();
 
   try {
+    // Subscribe to WebSocket FIRST to receive live updates
+    await subscribe(jobId);
+    setCompiling();
+
+    // Now submit the job with the same jobId
     const response = await fetch(`${config.public.apiBaseUrl}/jobs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        problemId: exercise.value.id,
+        jobId,
+        exerciseId: exercise.value.id,
         language: 'typescript',
         code: code.value,
       }),
@@ -231,14 +239,10 @@ async function submitCode() {
 
     const data = await response.json();
 
-    if (data.status === 'completed' && data.result) {
-      // Use the synchronous result directly
-      setResult(data.result);
-    } else if (data.status === 'failed') {
+    // The WebSocket should handle live updates, but if it fails
+    // we can still use the REST response as fallback
+    if (data.status === 'failed' && !execState.finalResult) {
       setError(data.error || 'Execution failed');
-    } else if (data.jobId) {
-      // Fallback to WebSocket subscription if result not immediately available
-      subscribe(data.jobId);
     }
   } catch (err) {
     console.error('Submit error:', err);

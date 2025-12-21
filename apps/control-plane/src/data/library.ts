@@ -1,6 +1,6 @@
-import type { Problem } from '@code-practice/shared-types';
+import type { Exercise } from '@code-practice/shared-types';
 
-export const exercises: Record<string, Problem> = {
+export const exercises: Record<string, Exercise> = {
   'two-sum': {
     id: 'two-sum',
     title: 'Two Sum',
@@ -96,11 +96,11 @@ Output: ["1", "2", "Fizz", "4", "Buzz"]
   },
 };
 
-export function getExerciseById(id: string): Problem | undefined {
+export function getExerciseById(id: string): Exercise | undefined {
   return exercises[id];
 }
 
-export function getAllExercises(): Problem[] {
+export function getAllExercises(): Exercise[] {
   return Object.values(exercises);
 }
 

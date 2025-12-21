@@ -3,14 +3,14 @@
     <UContainer>
       <header class="py-4">
         <nav class="flex items-center justify-between">
-          <NuxtLink to="/" class="text-xl font-bold text-primary">
+          <NuxtLink to="/dashboard" class="text-xl font-bold text-primary">
             {{ $t('app.name') }}
           </NuxtLink>
 
           <div class="flex items-center gap-4">
             <template v-if="user">
-              <NuxtLink to="/dashboard">
-                <UButton variant="ghost">{{ $t('nav.dashboard') }}</UButton>
+              <NuxtLink to="/library">
+                <UButton variant="ghost">{{ $t('nav.library') }}</UButton>
               </NuxtLink>
               <UButton variant="soft" color="error" @click="handleLogout">
                 {{ $t('nav.logout') }}

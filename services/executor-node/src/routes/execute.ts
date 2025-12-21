@@ -22,7 +22,7 @@ function createEvent(jobId: string, event: string, data?: unknown): WebSocketEve
 
 export const executeRoute: FastifyPluginAsync = async (fastify) => {
   fastify.post<{ Body: ExecutorRequest }>('/execute', async (request, reply) => {
-    const { problem, code, language } = request.body;
+    const { exercise, code, language } = request.body;
     const jobId = request.body.jobId || nanoid();
 
     // Only accept TypeScript
@@ -37,7 +37,7 @@ export const executeRoute: FastifyPluginAsync = async (fastify) => {
     // Broadcast job started
     broadcastToJob(jobId, createEvent(jobId, 'job_started', {
       language,
-      totalTests: problem.testCases.length,
+      totalTests: exercise.testCases.length,
     }));
 
     // Compile TypeScript
@@ -84,13 +84,13 @@ export const executeRoute: FastifyPluginAsync = async (fastify) => {
     try {
       const runResult = await runCode(
         compileResult.code,
-        problem.functionName,
-        problem.testCases,
+        exercise.functionName,
+        exercise.testCases,
         onTestResult,
       );
 
       const passedCount = runResult.testResults.filter(t => t.passed).length;
-      const totalTests = problem.testCases.length;
+      const totalTests = exercise.testCases.length;
 
       let overallStatus: ExecutionResult['overallStatus'];
       if (passedCount === totalTests) {
