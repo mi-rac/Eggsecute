@@ -8,7 +8,7 @@
     </p>
 
     <div class="flex gap-4">
-      <NuxtLink to="/register">
+      <NuxtLink to="/dashboard">
         <UButton size="lg">{{ $t('home.getStarted') }}</UButton>
       </NuxtLink>
     </div>
