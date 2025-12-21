@@ -8,15 +8,15 @@
       {{ $t('common.error') }}: {{ error.message }}
     </div>
 
-    <div v-else-if="problem" class="grid grid-cols-2 gap-4 h-full">
+    <div v-else-if="exercise" class="grid grid-cols-2 gap-4 h-full">
       <!-- Left: Problem Description -->
       <div class="overflow-auto">
         <UCard class="h-full">
           <template #header>
             <div class="flex items-center justify-between">
-              <h1 class="text-2xl font-bold">{{ problem.title }}</h1>
-              <UBadge :color="getDifficultyColor(problem.difficulty)" variant="subtle">
-                {{ $t(`exercises.difficulty.${problem.difficulty}`) }}
+              <h1 class="text-2xl font-bold">{{ exercise.title }}</h1>
+              <UBadge :color="getDifficultyColor(exercise.difficulty)" variant="subtle">
+                {{ $t(`exercises.difficulty.${exercise.difficulty}`) }}
               </UBadge>
             </div>
           </template>
@@ -29,7 +29,7 @@
           <div class="mt-6">
             <h3 class="text-lg font-semibold mb-3">{{ $t('problem.testCases') }}</h3>
             <div class="space-y-2">
-              <div v-for="(tc, i) in problem.testCases" :key="i" class="bg-gray-100 dark:bg-gray-800 p-3 rounded text-sm font-mono">
+              <div v-for="(tc, i) in exercise.testCases" :key="i" class="bg-gray-100 dark:bg-gray-800 p-3 rounded text-sm font-mono">
                 <div><strong>{{ $t('problem.input') }}:</strong> {{ JSON.stringify(tc.input) }}</div>
                 <div v-if="tc.description" class="text-gray-500 text-xs mt-1">{{ tc.description }}</div>
               </div>
@@ -139,9 +139,9 @@ const route = useRoute();
 const config = useRuntimeConfig();
 const { state: execState, subscribe, reset: resetExec, setCompiling, setResult, setError } = useExecutionSocket();
 
-const problemId = route.params.id as string;
+const exerciseId = route.params.id as string;
 
-interface ClientProblem {
+interface ClientExercise {
   id: string;
   title: string;
   description: string;
@@ -150,13 +150,13 @@ interface ClientProblem {
   testCases: Array<{ index: number; input: unknown[]; description?: string }>;
 }
 
-const { data: problem, pending, error } = await useFetch<ClientProblem>(
-  `${config.public.apiBaseUrl}/library/${problemId}`
+const { data: exercise, pending, error } = await useFetch<ClientExercise>(
+  `${config.public.apiBaseUrl}/library/${exerciseId}`
 );
 
 const defaultCode = computed(() => {
-  if (!problem.value) return '';
-  return `function ${problem.value.functionName}(...args: unknown[]): unknown {
+  if (!exercise.value) return '';
+  return `function ${exercise.value.functionName}(...args: unknown[]): unknown {
   // Your solution here
   return null;
 }`;
@@ -170,8 +170,8 @@ watch(defaultCode, (val) => {
 });
 
 const renderedDescription = computed(() => {
-  if (!problem.value) return '';
-  return problem.value.description
+  if (!exercise.value) return '';
+  return exercise.value.description
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>')
@@ -212,7 +212,7 @@ function resetCode() {
 }
 
 async function submitCode() {
-  if (!problem.value) return;
+  if (!exercise.value) return;
 
   submitting.value = true;
   resetExec();
@@ -223,7 +223,7 @@ async function submitCode() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        problemId: problem.value.id,
+        problemId: exercise.value.id,
         language: 'typescript',
         code: code.value,
       }),

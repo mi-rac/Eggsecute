@@ -14,7 +14,7 @@
       <UCard v-for="problem in exercises" :key="problem.id" class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
         <div class="flex items-center justify-between">
           <div class="flex-1">
-            <NuxtLink :to="`/exercises/${problem.id}`" class="text-xl font-semibold hover:text-primary">
+            <NuxtLink :to="`/library/${problem.id}`" class="text-xl font-semibold hover:text-primary">
               {{ problem.title }}
             </NuxtLink>
             <p class="text-gray-600 dark:text-gray-400 mt-1 text-sm">
@@ -29,7 +29,7 @@
               {{ $t(`exercises.difficulty.${problem.difficulty}`) }}
             </UBadge>
             <UButton
-              :to="`/exercises/${problem.id}`"
+              :to="`/library/${problem.id}`"
               color="primary"
               variant="soft"
             >
