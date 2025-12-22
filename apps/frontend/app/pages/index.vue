@@ -7,17 +7,28 @@
       {{ $t('home.description') }}
     </p>
 
-    <div class="flex gap-4">
-      <NuxtLink to="/dashboard">
-        <UButton size="lg">{{ $t('home.getStarted') }}</UButton>
-      </NuxtLink>
-    </div>
+	    <div class="flex gap-4">
+	      <NuxtLink to="/login">
+	        <UButton size="lg">{{ $t('nav.login') }}</UButton>
+	      </NuxtLink>
+	      <NuxtLink to="/register">
+	        <UButton size="lg" variant="outline">{{ $t('nav.register') }}</UButton>
+	      </NuxtLink>
+	    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  layout: 'default',
-})
+	definePageMeta({
+	  layout: 'default',
+	})
+
+	const user = useSupabaseUser()
+
+	watchEffect(() => {
+	  if (user.value) {
+	    navigateTo('/dashboard')
+	  }
+	})
 </script>
 

@@ -16,11 +16,13 @@
     "@nuxtjs/i18n": "^10.2.1",
     "@nuxtjs/supabase": "^2.0.3",
     "nuxt": "^4.2.2",
+    "splitpanes": "^4.0.4",
     "tailwindcss": "^4.1.18",
     "vue": "^3.5.25",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@iconify-json/heroicons": "^1.2.3"
+    "@iconify-json/heroicons": "^1.2.3",
+    "@types/splitpanes": "^2.2.6"
   }
 }

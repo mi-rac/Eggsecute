@@ -44,7 +44,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth',
+	layout: 'app',
+	middleware: 'auth',
 });
 
 const config = useRuntimeConfig();
