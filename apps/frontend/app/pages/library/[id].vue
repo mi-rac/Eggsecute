@@ -135,6 +135,10 @@
 <script setup lang="ts">
 import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
 
+definePageMeta({
+  middleware: 'auth',
+});
+
 const route = useRoute();
 const config = useRuntimeConfig();
 const { state: execState, subscribe, reset: resetExec, setCompiling, setResult, setError } = useExecutionSocket();
