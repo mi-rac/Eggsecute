@@ -64,7 +64,8 @@
     "input": "Input",
     "expected": "Expected",
     "actual": "Actual",
-    "results": "Results",
+	    "results": "Results",
+	    "codeEditor": "Code editor",
     "submit": "Run Code",
     "submitting": "Running...",
     "reset": "Reset"
@@ -82,10 +83,18 @@
     "memoryUsage": "Memory usage",
     "testsPassed": "{passed} of {total} tests passed",
     "allTestsPassed": "All tests passed!",
-    "someTestsFailed": "Some tests failed",
-    "passed": "Passed",
-    "failed": "Failed"
+	    "someTestsFailed": "Some tests failed",
+	    "passed": "Passed",
+	    "failed": "Failed",
+	    "testLabel": "Test {index}",
+	    "genericError": "Execution failed",
+	    "connectionError": "WebSocket connection error"
   },
+	  "languages": {
+	    "addLanguage": "Add language",
+	    "typescript": "TypeScript",
+	    "python": "Python"
+	  },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",

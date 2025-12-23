@@ -1,14 +1,26 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { nanoid } from 'nanoid';
 import type {
-  JobSubmission,
-  Job,
-  ExecutorRequest,
-  ExecutorResponse,
-} from '@code-practice/shared-types';
+	  JobSubmission,
+	  Job,
+	  ExecutorRequest,
+	  ExecutorResponse,
+	  SupportedLanguage,
+	} from '@code-practice/shared-types';
 import { getExerciseById } from '../data/library.js';
 
-const EXECUTOR_URL = process.env.EXECUTOR_NODE_URL || 'http://localhost:3002';
+const EXECUTOR_NODE_URL = process.env.EXECUTOR_NODE_URL || 'http://localhost:3002';
+const EXECUTOR_PYTHON_URL = process.env.EXECUTOR_PYTHON_URL || 'http://localhost:3003';
+
+function getExecutorUrl(language: SupportedLanguage): string {
+	  switch (language) {
+	  	  case 'python':
+	  	  	  return EXECUTOR_PYTHON_URL;
+	  	  default:
+	  	  	  // For now, all non-Python languages are handled by the Node executor.
+	  	  	  return EXECUTOR_NODE_URL;
+	  }
+}
 
 // In-memory job store (replace with database in production)
 const jobs = new Map<string, Job>();
@@ -37,19 +49,21 @@ export const jobRoutes: FastifyPluginAsync = async (fastify) => {
     };
     jobs.set(jobId, job);
 
-    // Forward to executor
+	    // Forward to executor
     try {
       job.status = 'running';
       job.startedAt = new Date();
 
-      const executorRequest: ExecutorRequest = {
+	      const executorRequest: ExecutorRequest = {
         jobId,
         exercise,
         code,
         language,
       };
 
-      const response = await fetch(`${EXECUTOR_URL}/execute`, {
+	      const executorUrl = getExecutorUrl(language);
+
+	      const response = await fetch(`${executorUrl}/execute`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(executorRequest),

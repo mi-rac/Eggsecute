@@ -47,108 +47,144 @@
         </div>
       </Pane>
 
-      <!-- Right: Code Editor & Results (vertical split) -->
-      <Pane :size="70" :min-size="30">
-        <Splitpanes horizontal class="h-full">
-          <!-- Top: Editor -->
-          <Pane :size="60" :min-size="20">
-            <div class="flex flex-col h-full border-b border-gray-200 dark:border-gray-700">
-              <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shrink-0">
-                <span class="font-semibold">TypeScript</span>
+	      <!-- Right: Single code editor & results with language selector -->
+	      <Pane :size="70" :min-size="30">
+	        <div class="h-full flex flex-col border-l border-gray-200 dark:border-gray-700">
+	          
+
+	          <div class="flex-1 min-h-0 flex flex-col">
+	            <!-- Panel header with language selector -->
+              <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/40 border-b border-gray-200 dark:border-gray-700">
+                <USelectMenu
+                  v-model="selectedLanguage"
+                  :items="languageSelectItems"
+                  value-key="value"
+                  label-key="label"
+                  size="sm"
+                />
                 <div class="flex gap-2">
-                  <UButton variant="ghost" size="sm" @click="resetCode">
-                    {{ $t('problem.reset') }}
+                  <UButton variant="ghost" size="sm" @click="resetCode(selectedLanguage)">
+                  {{ $t('problem.reset') }}
                   </UButton>
-                  <UButton color="primary" :loading="submitting" @click="submitCode">
-                    {{ submitting ? $t('problem.submitting') : $t('problem.submit') }}
+                  <UButton
+                    color="primary"
+                  :loading="isSubmitting"
+                    @click="submitCode(selectedLanguage)"
+                  >
+                  {{ isSubmitting ? $t('problem.submitting') : $t('problem.submit') }}
                   </UButton>
                 </div>
               </div>
-              <ClientOnly>
-                <div class="flex-1 min-h-0">
-                  <VueMonacoEditor
-                    v-model:value="code"
-                    language="typescript"
-                    theme="vs-dark"
-                    :options="editorOptions"
-                    style="height: 100%; width: 100%;"
-                  />
-                </div>
-              </ClientOnly>
-            </div>
-          </Pane>
 
-          <!-- Bottom: Results -->
-          <Pane :size="40" :min-size="15">
-            <div class="h-full overflow-auto p-4">
-              <div class="flex items-center justify-between mb-4">
-                <span class="font-semibold">{{ $t('problem.results') }}</span>
-                <UBadge :color="getStatusColor(execState.status)">
-                  {{ $t(`execution.status.${execState.status}`) }}
-                </UBadge>
-              </div>
+              <!-- Editor + Results split vertically -->
+              <Splitpanes horizontal class="flex-1 min-h-0">
+                <!-- Editor -->
+                <Pane :size="70" :min-size="30">
+                  <ClientOnly>
+                    <div class="h-full border-b border-gray-200 dark:border-gray-700">
+                      <VueMonacoEditor
+                        v-model:value="currentCode"
+                        :language="currentPanel.monacoLanguage"
+                        theme="vs-dark"
+                        :options="editorOptions"
+                        style="height: 100%; width: 100%;"
+                      />
+                    </div>
+                  </ClientOnly>
+                </Pane>
 
-              <!-- Metrics -->
-              <div v-if="execState.compileTimeMs !== null" class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                {{ $t('execution.compileTime') }}: {{ execState.compileTimeMs }}{{ $t('common.ms') }}
-              </div>
+                <!-- Results -->
+                <Pane :size="30" :min-size="20">
+                  <div class="h-full overflow-auto p-4">
+                    <div class="flex items-center justify-between mb-4">
+                      <span class="font-semibold">{{ $t('problem.results') }}</span>
+                      <UBadge :color="getStatusColor(currentPanel.execution.state.status)">
+                        {{ $t(`execution.status.${currentPanel.execution.state.status}`) }}
+                      </UBadge>
+                    </div>
 
-              <!-- Test Results -->
-              <div v-if="execState.testResults.length > 0" class="space-y-2">
-                <div
-                  v-for="(result, i) in execState.testResults"
-                  :key="i"
-                  class="p-3 rounded text-sm"
-                  :class="result.passed ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'"
-                >
-                  <div class="flex items-center gap-2">
-                    <UIcon
-                      :name="result.passed ? 'i-heroicons-check-circle' : 'i-heroicons-x-circle'"
-                      :class="result.passed ? 'text-green-500' : 'text-red-500'"
-                    />
-                    <span class="font-medium">
-                      Test {{ i + 1 }}: {{ result.passed ? $t('execution.passed') : $t('execution.failed') }}
-                    </span>
-                    <span class="text-gray-500 ml-auto">
-                      {{ result.executionTimeMs }}{{ $t('common.ms') }}
-                    </span>
+                    <!-- Metrics -->
+                    <div
+                      v-if="currentPanel.execution.state.compileTimeMs !== null"
+                      class="mb-4 text-sm text-gray-600 dark:text-gray-400"
+                    >
+                      {{ $t('execution.compileTime') }}:
+                      {{ currentPanel.execution.state.compileTimeMs }}{{ $t('common.ms') }}
+                    </div>
+
+                    <!-- Test Results -->
+                    <div v-if="currentPanel.execution.state.testResults.length > 0" class="space-y-2">
+                      <div
+                        v-for="(result, i) in currentPanel.execution.state.testResults"
+                        :key="i"
+                        class="p-3 rounded text-sm"
+                        :class="result.passed ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'"
+                      >
+                        <div class="flex items-center gap-2">
+                          <UIcon
+                            :name="result.passed ? 'i-heroicons-check-circle' : 'i-heroicons-x-circle'"
+                            :class="result.passed ? 'text-green-500' : 'text-red-500'"
+                          />
+                          <span class="font-medium">
+                            {{ $t('execution.testLabel', { index: i + 1 }) }}:
+                            {{ result.passed ? $t('execution.passed') : $t('execution.failed') }}
+                          </span>
+                          <span class="text-gray-500 ml-auto">
+                            {{ result.executionTimeMs }}{{ $t('common.ms') }}
+                          </span>
+                        </div>
+                        <div v-if="!result.passed" class="mt-2 font-mono text-xs">
+                          <div>{{ $t('problem.expected') }}: {{ JSON.stringify(result.expectedOutput) }}</div>
+                          <div>{{ $t('problem.actual') }}: {{ JSON.stringify(result.actualOutput) }}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Error -->
+                    <div v-if="currentPanel.execution.state.error" class="text-red-500 mt-4">
+                      {{ currentPanel.execution.state.error }}
+                    </div>
+
+                    <!-- Summary -->
+                    <div
+                      v-if="currentPanel.execution.state.finalResult"
+                      class="mt-4 p-3 rounded"
+                      :class="currentPanel.execution.state.finalResult.overallStatus === 'success'
+                        ? 'bg-green-100 dark:bg-green-900/30'
+                        : 'bg-red-100 dark:bg-red-900/30'"
+                    >
+                      <div class="font-semibold">
+                        {{
+                          currentPanel.execution.state.finalResult.overallStatus === 'success'
+                            ? $t('execution.allTestsPassed')
+                            : $t('execution.someTestsFailed')
+                        }}
+                      </div>
+                      <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        {{
+                          $t('execution.testsPassed', {
+                            passed: currentPanel.execution.state.finalResult.testResults.filter(t => t.passed).length,
+                            total: currentPanel.execution.state.finalResult.testResults.length,
+                          })
+                        }}
+                      </div>
+                    </div>
                   </div>
-                  <div v-if="!result.passed" class="mt-2 font-mono text-xs">
-                    <div>{{ $t('problem.expected') }}: {{ JSON.stringify(result.expectedOutput) }}</div>
-                    <div>{{ $t('problem.actual') }}: {{ JSON.stringify(result.actualOutput) }}</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Error -->
-              <div v-if="execState.error" class="text-red-500 mt-4">
-                {{ execState.error }}
-              </div>
-
-              <!-- Summary -->
-              <div v-if="execState.finalResult" class="mt-4 p-3 rounded" :class="execState.finalResult.overallStatus === 'success' ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'">
-                <div class="font-semibold">
-                  {{ execState.finalResult.overallStatus === 'success' ? $t('execution.allTestsPassed') : $t('execution.someTestsFailed') }}
-                </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {{ $t('execution.testsPassed', {
-                    passed: execState.finalResult.testResults.filter(t => t.passed).length,
-                    total: execState.finalResult.testResults.length
-                  }) }}
-                </div>
-              </div>
-            </div>
-          </Pane>
-        </Splitpanes>
-      </Pane>
+                </Pane>
+              </Splitpanes>
+	          </div>
+	        </div>
+	      </Pane>
     </Splitpanes>
   </div>
 </template>
 
 <script setup lang="ts">
-import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
-import { Splitpanes, Pane } from 'splitpanes';
-import 'splitpanes/dist/splitpanes.css';
+	import { VueMonacoEditor } from '@guolao/vue-monaco-editor';
+	import { Splitpanes, Pane } from 'splitpanes';
+	import 'splitpanes/dist/splitpanes.css';
+	import type { Ref } from 'vue';
+	import type { SupportedLanguage } from '@code-practice/shared-types';
 
 definePageMeta({
   layout: 'app',
@@ -157,7 +193,7 @@ definePageMeta({
 
 const route = useRoute();
 const config = useRuntimeConfig();
-const { state: execState, subscribe, reset: resetExec, setCompiling, setError } = useExecutionSocket();
+	const { t } = useI18n();
 
 const exerciseId = route.params.id as string;
 
@@ -174,20 +210,147 @@ const { data: exercise, pending, error } = await useFetch<ClientExercise>(
   `${config.public.apiBaseUrl}/library/${exerciseId}`
 );
 
-const defaultCode = computed(() => {
-  if (!exercise.value) return '';
-  return `function ${exercise.value.functionName}(...args: unknown[]): unknown {
-  // Your solution here
-  return null;
-}`;
-});
+	type EditorLanguage = Extract<SupportedLanguage, 'typescript' | 'python'>;
+		const AVAILABLE_LANGUAGES: EditorLanguage[] = ['typescript', 'python'];
 
-const code = ref(defaultCode.value);
-const submitting = ref(false);
+		const STORAGE_KEY = 'eggsecute:codeStates:v1';
 
-watch(defaultCode, (val) => {
-  if (!code.value || code.value === '') code.value = val;
-});
+		interface StoredCodeState {
+		  [exerciseId: string]: Partial<Record<EditorLanguage, string>>;
+		}
+
+		function getDefaultCode(language: EditorLanguage): string {
+	  if (!exercise.value) return '';
+	  const fn = exercise.value.functionName;
+
+	  if (language === 'python') {
+	    return `def ${fn}(*args):\n    # Your solution here\n    return None`;
+	  }
+	  // Default TypeScript solution template
+	  return `function ${fn}(...args: unknown[]): unknown {\n  // Your solution here\n  return null;\n}`;
+		}
+
+		type ExecutionComposable = ReturnType<typeof useExecutionSocket>;
+
+	interface LanguagePanelState {
+	  language: EditorLanguage;
+	  labelKey: string;
+	  monacoLanguage: string;
+	  code: Ref<string>;
+	  submitting: Ref<boolean>;
+	  execution: ExecutionComposable;
+	}
+
+	const languageMeta: Record<EditorLanguage, { labelKey: string; monacoLanguage: string }> = {
+	  typescript: {
+	    labelKey: 'languages.typescript',
+	    monacoLanguage: 'typescript',
+	  },
+	  python: {
+	    labelKey: 'languages.python',
+	    monacoLanguage: 'python',
+	  },
+		};
+
+		function loadStoredCode(exerciseId: string, language: EditorLanguage, defaultCode: string): string {
+		  if (import.meta.server) return defaultCode;
+		  try {
+		    const raw = window.localStorage.getItem(STORAGE_KEY);
+		    if (!raw) return defaultCode;
+		    const parsed = JSON.parse(raw) as StoredCodeState;
+		    return parsed?.[exerciseId]?.[language] ?? defaultCode;
+		  } catch {
+		    return defaultCode;
+		  }
+		}
+
+		function saveCode(exerciseId: string, language: EditorLanguage, code: string) {
+		  if (import.meta.server) return;
+		  try {
+		    const raw = window.localStorage.getItem(STORAGE_KEY);
+		    const parsed: StoredCodeState = raw ? JSON.parse(raw) : {};
+		    if (!parsed[exerciseId]) parsed[exerciseId] = {};
+		    parsed[exerciseId]![language] = code;
+		    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+		  } catch {
+		    // ignore persistence errors
+		  }
+		}
+
+			const panelByLanguage: Partial<Record<EditorLanguage, LanguagePanelState>> = {};
+		const selectedLanguage = ref<EditorLanguage>('typescript');
+	
+		function createPanel(language: EditorLanguage): LanguagePanelState {
+		  const execution = useExecutionSocket();
+		  const meta = languageMeta[language];
+		  const defaultCode = computed(() => getDefaultCode(language));
+		  const code = ref<string>('');
+		  const submitting = ref(false);
+	
+		  if (import.meta.client) {
+		    code.value = loadStoredCode(exerciseId, language, defaultCode.value);
+		  } else {
+		    code.value = defaultCode.value;
+		  }
+	
+		  watch(defaultCode, (val) => {
+		    if (!code.value) {
+		      if (import.meta.client) {
+		        code.value = loadStoredCode(exerciseId, language, val);
+		      } else {
+		        code.value = val;
+		      }
+		    }
+		  });
+	
+		  if (import.meta.client) {
+		    watch(
+		      code,
+		      (val) => {
+		        saveCode(exerciseId, language, val);
+		      },
+		      { flush: 'post' },
+		    );
+		  }
+	
+		  return {
+		    language,
+		    labelKey: meta.labelKey,
+		    monacoLanguage: meta.monacoLanguage,
+		    code,
+		    submitting,
+		    execution,
+		  };
+		}
+	
+		function ensurePanel(language: EditorLanguage): LanguagePanelState {
+		  const existing = panelByLanguage[language];
+		  if (existing) return existing;
+		  const panel = createPanel(language);
+		  panelByLanguage[language] = panel;
+		  return panel;
+		}
+	
+			// Initialize with TypeScript panel available
+			ensurePanel('typescript');
+		
+			const currentPanel = computed(() => ensurePanel(selectedLanguage.value));
+
+			const currentCode = computed({
+			  get: () => currentPanel.value.code.value,
+			  set: (val: string) => {
+			    currentPanel.value.code.value = val;
+			  },
+			});
+
+			const isSubmitting = computed(() => currentPanel.value.submitting.value);
+
+			const languageSelectItems = computed(() =>
+			  AVAILABLE_LANGUAGES.map((lang) => ({
+			    value: lang,
+			    label: t(languageMeta[lang].labelKey),
+			  })),
+			);
 
 const renderedDescription = computed(() => {
   if (!exercise.value) return '';
@@ -226,51 +389,53 @@ function getStatusColor(status: string) {
   }
 }
 
-function resetCode() {
-  code.value = defaultCode.value;
-  resetExec();
-}
+	function resetCode(language: EditorLanguage) {
+	  const panel = ensurePanel(language);
+	  panel.code.value = getDefaultCode(language);
+	  panel.execution.reset();
+	}
 
-async function submitCode() {
-  if (!exercise.value) return;
+	async function submitCode(language: EditorLanguage) {
+	  if (!exercise.value) return;
+	  const panel = ensurePanel(language);
 
-  submitting.value = true;
-  resetExec();
+	  panel.submitting.value = true;
+	  panel.execution.reset();
 
-  // Generate a job ID upfront so we can subscribe before submitting
-  const jobId = crypto.randomUUID();
+	  // Generate a job ID upfront so we can subscribe before submitting
+	  const jobId = crypto.randomUUID();
 
-  try {
-    // Subscribe to WebSocket FIRST to receive live updates
-    await subscribe(jobId);
-    setCompiling();
+	  try {
+	    // Subscribe to WebSocket FIRST to receive live updates
+	    await panel.execution.subscribe(jobId, language);
+	    panel.execution.setCompiling();
 
-    // Now submit the job with the same jobId
-    const response = await fetch(`${config.public.apiBaseUrl}/jobs`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jobId,
-        exerciseId: exercise.value.id,
-        language: 'typescript',
-        code: code.value,
-      }),
-    });
+	    // Now submit the job with the same jobId
+	    const response = await fetch(`${config.public.apiBaseUrl}/jobs`, {
+	      method: 'POST',
+	      headers: { 'Content-Type': 'application/json' },
+	      body: JSON.stringify({
+	        jobId,
+	        exerciseId: exercise.value.id,
+	        language,
+	        code: panel.code.value,
+	      }),
+	    });
 
-    const data = await response.json();
+	    const data = await response.json();
 
-    // The WebSocket should handle live updates, but if it fails
-    // we can still use the REST response as fallback
-    if (data.status === 'failed' && !execState.finalResult) {
-      setError(data.error || 'Execution failed');
-    }
-  } catch (err) {
-    console.error('Submit error:', err);
-    setError(err instanceof Error ? err.message : 'Unknown error');
-  } finally {
-    submitting.value = false;
-  }
-}
+	    // The WebSocket should handle live updates, but if it fails
+	    // we can still use the REST response as fallback
+	    if (data.status === 'failed' && !panel.execution.state.finalResult) {
+	      panel.execution.setError(data.error || t('execution.genericError'));
+	    }
+	  } catch (err) {
+	    console.error('Submit error:', err);
+	    panel.execution.setError(err instanceof Error ? err.message : t('execution.genericError'));
+	  } finally {
+	    panel.submitting.value = false;
+	  }
+	}
 </script>
 
 <style>

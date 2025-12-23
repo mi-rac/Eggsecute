@@ -4,7 +4,8 @@
   "private": true,
   "description": "Python executor service (FastAPI) for Eggsecute",
   "scripts": {
-    "dev": "pipenv run python main.py"
+	    "dev": "pipenv run uvicorn main:app --host 0.0.0.0 --port 3003 --reload",
+	    "start": "pipenv run python main.py"
   }
 }
 

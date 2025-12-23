@@ -133,7 +133,12 @@ async def _run_single_test(
             "error": f"Invalid JSON from harness: {exc}",
         }
 
-    if not data.get("success"):
+    # Determine whether the user code executed successfully in the harness.
+    success = bool(data.get("success"))
+    actual = data.get("result")
+
+    if not success:
+        # The harness reported an execution error (exception in user code).
         return {
             "passed": False,
             "actualOutput": None,
@@ -142,9 +147,13 @@ async def _run_single_test(
             "error": data.get("error") or "Unknown error in harness",
         }
 
+    # Compare the actual result with the expected output from the test case.
+    expected = test_case.expectedOutput
+    passed = actual == expected
+
     return {
-        "passed": True,
-        "actualOutput": data.get("result"),
+        "passed": passed,
+        "actualOutput": actual,
         "executionTimeMs": float(data.get("executionTimeMs", wall_ms)),
         "memoryUsageBytes": int(data.get("memoryUsageBytes", 0)),
     }

@@ -1,4 +1,4 @@
-import type { WebSocketEvent, TestResult, ExecutionResult } from '@code-practice/shared-types';
+import type { WebSocketEvent, TestResult, ExecutionResult, SupportedLanguage } from '@code-practice/shared-types';
 
 export interface ExecutionState {
   connected: boolean;
@@ -13,6 +13,7 @@ export interface ExecutionState {
 export function useExecutionSocket() {
   const config = useRuntimeConfig();
   const wsUrl = config.public.apiBaseUrl.replace('http', 'ws') + '/ws';
+	  const { t } = useI18n();
 
   const state = reactive<ExecutionState>({
     connected: false,
@@ -39,9 +40,9 @@ export function useExecutionSocket() {
       state.connected = false;
     };
 
-    socket.onerror = () => {
-      state.error = 'WebSocket connection error';
-    };
+	    socket.onerror = () => {
+	      state.error = t('execution.connectionError');
+	    };
 
     socket.onmessage = (event) => {
       try {
@@ -99,18 +100,18 @@ export function useExecutionSocket() {
       case 'job_failed':
         state.status = 'failed';
         state.finalResult = event.data as ExecutionResult;
-        state.error = state.finalResult.errorMessage || 'Execution failed';
+	    	    state.error = state.finalResult.errorMessage || t('execution.genericError');
         break;
     }
   }
 
-  function subscribe(jobId: string): Promise<void> {
+	  function subscribe(jobId: string, language?: SupportedLanguage): Promise<void> {
     return new Promise((resolve) => {
       if (!socket || socket.readyState !== WebSocket.OPEN) {
         connect();
         // Wait for connection then subscribe
         setTimeout(() => {
-          subscribe(jobId).then(resolve);
+	          subscribe(jobId, language).then(resolve);
         }, 100);
         return;
       }
@@ -135,9 +136,13 @@ export function useExecutionSocket() {
           // ignore
         }
       };
-      socket.addEventListener('message', onMessage);
+	      socket.addEventListener('message', onMessage);
 
-      socket.send(JSON.stringify({ type: 'subscribe', jobId }));
+	      socket.send(JSON.stringify({
+	        type: 'subscribe',
+	        jobId,
+	        ...(language ? { language } : {}),
+	      }));
 
       // Timeout fallback
       setTimeout(() => {
