@@ -10,7 +10,7 @@
 
     <Splitpanes v-else-if="exercise" class="default-theme h-full">
       <!-- Left: Problem Description -->
-        <Pane :size="40" :min-size="20">
+        <Pane :size="30" :min-size="20">
           <div class="h-full p-4">
             <UCard
               class="h-full flex flex-col overflow-hidden"
@@ -48,7 +48,7 @@
       </Pane>
 
       <!-- Right: Code Editor & Results (vertical split) -->
-      <Pane :size="60" :min-size="30">
+      <Pane :size="70" :min-size="30">
         <Splitpanes horizontal class="h-full">
           <!-- Top: Editor -->
           <Pane :size="60" :min-size="20">

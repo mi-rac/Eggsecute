@@ -8,7 +8,8 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "dev:executor-python": "python3 services/executor-python/main.py"
   },
   "devDependencies": {
     "turbo": "^2.3.3"

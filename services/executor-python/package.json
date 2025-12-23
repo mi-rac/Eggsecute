@@ -1,0 +1,10 @@
+{
+  "name": "@eggsecute/executor-python",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Python executor service (FastAPI) for Eggsecute",
+  "scripts": {
+    "dev": "pipenv run python main.py"
+  }
+}
+
