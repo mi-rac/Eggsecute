@@ -51,7 +51,6 @@
 	      <Pane :size="70" :min-size="30">
 	        <div class="h-full flex flex-col border-l border-gray-200 dark:border-gray-700">
 	          
-
 	          <div class="flex-1 min-h-0 flex flex-col">
 	            <!-- Panel header with language selector -->
               <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/40 border-b border-gray-200 dark:border-gray-700">
@@ -79,7 +78,7 @@
               <!-- Editor + Results split vertically -->
               <Splitpanes horizontal class="flex-1 min-h-0">
                 <!-- Editor -->
-                <Pane :size="70" :min-size="30">
+                <Pane :size="60" :min-size="30">
                   <ClientOnly>
                     <div class="h-full border-b border-gray-200 dark:border-gray-700">
                       <VueMonacoEditor
@@ -94,7 +93,7 @@
                 </Pane>
 
                 <!-- Results -->
-                <Pane :size="30" :min-size="20">
+                <Pane :size="40" :min-size="20">
                   <div class="h-full overflow-auto p-4">
                     <div class="flex items-center justify-between mb-4">
                       <span class="font-semibold">{{ $t('problem.results') }}</span>
