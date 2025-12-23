@@ -1,11 +1,25 @@
 <template>
-  <UDashboardGroup storage="local" storage-key="main-layout">
-    <UDashboardSidebar collapsible resizable :ui="{ footer: 'border-t border-default' }">
+	  <UDashboardGroup>
+      <UDashboardSidebar
+        v-model:collapsed="sidebarCollapsed"
+        collapsible
+        :ui="{ root: sidebarCollapsed ? 'w-16' : 'w-48', footer: 'border-t border-default' }"
+      >
       <template #header="{ collapsed }">
-        <UIcon name="i-simple-icons-nuxtdotjs" class="size-5 text-primary shrink-0" />
-        <span v-if="!collapsed" class="font-semibold truncate">
-          {{ $t('app.name') }}
-        </span>
+        <div v-if="!collapsed" class="flex items-center gap-2 w-full">
+          <UIcon name="i-simple-icons-nuxtdotjs" class="size-5 text-primary shrink-0" />
+          <span class="font-semibold truncate">
+            {{ $t('app.name') }}
+          </span>
+          <UTooltip :text="$t('sidebar.collapse')">
+            <UDashboardSidebarCollapse variant="subtle" size="sm" class="ms-auto" />
+          </UTooltip>
+        </div>
+        <div v-else class="flex items-center justify-center w-full">
+          <UTooltip :text="$t('sidebar.expand')">
+            <UDashboardSidebarCollapse variant="subtle" size="sm" />
+          </UTooltip>
+        </div>
       </template>
 
       <template #default="{ collapsed }">
@@ -13,32 +27,49 @@
           :collapsed="collapsed"
           orientation="vertical"
           :items="mainNavItems"
+          :tooltip="true"
         />
       </template>
 
       <template #footer="{ collapsed }">
         <div class="w-full">
           <template v-if="user">
-            <UButton
-              color="neutral"
-              variant="ghost"
-              class="w-full justify-start"
-              :block="collapsed"
-              @click="handleLogout"
-            >
-              <span v-if="!collapsed">
-                {{ $t('nav.logout') }}
-              </span>
-            </UButton>
+            <template v-if="collapsed">
+              <UTooltip :text="$t('sidebar.logout')">
+                <UButton
+                  color="error"
+                  variant="ghost"
+                  class="w-full justify-center"
+                  block
+                  square
+                  @click="handleLogout"
+                >
+                  <UIcon name="i-lucide-log-out" class="size-4" />
+                </UButton>
+              </UTooltip>
+            </template>
+            <template v-else>
+              <UButton
+                color="error"
+                variant="ghost"
+                class="w-full justify-start"
+                @click="handleLogout"
+              >
+                <UIcon name="i-lucide-log-out" class="size-4" />
+                <span class="ml-2">
+                  {{ $t('nav.logout') }}
+                </span>
+              </UButton>
+            </template>
           </template>
         </div>
       </template>
     </UDashboardSidebar>
 
-    <UDashboardPanel>
-      <main class="p-4 lg:p-6">
+    <UDashboardPanel :ui="{ body: 'flex flex-col flex-1 overflow-y-auto p-0 sm:p-0 gap-0 sm:gap-0' }">
+      <template #body>
         <slot />
-      </main>
+      </template>
     </UDashboardPanel>
   </UDashboardGroup>
 </template>
@@ -46,6 +77,8 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 
+	const sidebarCollapsed = ref(false)
+	
 const user = useSupabaseUser()
 const supabase = useSupabaseClient()
 const { t } = useI18n()

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full -m-4 lg:-m-6">
+  <div class="h-full">
     <div v-if="pending" class="flex justify-center py-8">
       <UIcon name="i-heroicons-arrow-path" class="animate-spin h-8 w-8" />
     </div>
@@ -10,32 +10,39 @@
 
     <Splitpanes v-else-if="exercise" class="default-theme h-full">
       <!-- Left: Problem Description -->
-      <Pane :size="40" :min-size="20">
-        <div class="h-full overflow-auto p-4">
-          <UCard class="h-full">
-            <template #header>
-              <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold">{{ exercise.title }}</h1>
-                <UBadge :color="getDifficultyColor(exercise.difficulty)" variant="subtle">
-                  {{ $t(`exercises.difficulty.${exercise.difficulty}`) }}
-                </UBadge>
-              </div>
-            </template>
-
-            <div class="prose dark:prose-invert max-w-none">
-              <h3>{{ $t('problem.description') }}</h3>
-              <div v-html="renderedDescription" />
+        <Pane :size="40" :min-size="20">
+          <div class="h-full p-4">
+            <UCard
+              class="h-full flex flex-col overflow-hidden"
+              :ui="{ body: 'flex-1 min-h-0 overflow-auto pr-2' }"
+            >
+              <template #header>
+            <div class="flex items-center justify-between">
+              <h1 class="text-2xl font-bold">{{ exercise.title }}</h1>
+              <UBadge :color="getDifficultyColor(exercise.difficulty)" variant="subtle">
+                {{ $t(`exercises.difficulty.${exercise.difficulty}`) }}
+              </UBadge>
             </div>
+              </template>
 
-            <div class="mt-6">
-              <h3 class="text-lg font-semibold mb-3">{{ $t('problem.testCases') }}</h3>
-              <div class="space-y-2">
-                <div v-for="(tc, i) in exercise.testCases" :key="i" class="bg-gray-100 dark:bg-gray-800 p-3 rounded text-sm font-mono">
-                  <div><strong>{{ $t('problem.input') }}:</strong> {{ JSON.stringify(tc.input) }}</div>
-                  <div v-if="tc.description" class="text-gray-500 text-xs mt-1">{{ tc.description }}</div>
+              <div class="prose dark:prose-invert max-w-none">
+                <h3>{{ $t('problem.description') }}</h3>
+                <div v-html="renderedDescription" />
+              </div>
+
+              <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-3">{{ $t('problem.testCases') }}</h3>
+                <div class="space-y-2">
+                  <div
+                    v-for="(tc, i) in exercise.testCases"
+                    :key="i"
+                    class="bg-gray-100 dark:bg-gray-800 p-3 rounded text-sm font-mono"
+                  >
+                    <div><strong>{{ $t('problem.input') }}:</strong> {{ JSON.stringify(tc.input) }}</div>
+                    <div v-if="tc.description" class="text-gray-500 text-xs mt-1">{{ tc.description }}</div>
+                  </div>
                 </div>
               </div>
-            </div>
           </UCard>
         </div>
       </Pane>

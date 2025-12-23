@@ -97,6 +97,11 @@
     "ms": "ms",
     "bytes": "bytes",
     "kb": "KB"
-  }
+	  },
+	  "sidebar": {
+	    "collapse": "Collapse sidebar",
+	    "expand": "Expand sidebar",
+	    "logout": "Log out"
+	  }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="p-4">
     <h1 class="text-3xl font-bold mb-2">
       {{ $t('dashboard.title') }}
     </h1>
