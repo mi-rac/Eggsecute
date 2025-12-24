@@ -81,6 +81,10 @@ importers:
       vue-router:
         specifier: ^4.6.4
         version: 4.6.4(vue@3.5.26)
+    devDependencies:
+      '@oxc-parser/binding-win32-x64-msvc':
+        specifier: ^0.105.0
+        version: 0.105.0
 
   packages/shared-types:
     devDependencies:
@@ -2676,6 +2680,13 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
+
+  /@oxc-parser/binding-win32-x64-msvc@0.105.0:
+    resolution: {integrity: sha512-ycJv2HahQRUxcSW/FeC5OFDw1yO2W2LVMCI8uwPhcGCuWIfuS+rDZWCOTarHCSdf3/sIxWjSYtSgEDFdxE61sw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [win32]
+    dev: true
 
   /@oxc-parser/binding-win32-x64-msvc@0.95.0:
     resolution: {integrity: sha512-BQpgl7rDjFvCIHudmUR0dCwc4ylBYZl4CPVinlD3NhkMif4WD5dADckoo5ES/KOpFyvwcbKZX+grP63cjHi26g==}
