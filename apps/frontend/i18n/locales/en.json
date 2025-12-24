@@ -64,11 +64,12 @@
     "input": "Input",
     "expected": "Expected",
     "actual": "Actual",
-	    "results": "Results",
-	    "codeEditor": "Code editor",
+    "results": "Results",
+    "codeEditor": "Code editor",
     "submit": "Run Code",
     "submitting": "Running...",
-    "reset": "Reset"
+    "reset": "Reset",
+    "loadingEditor": "Loading editor..."
   },
   "execution": {
     "status": {
