@@ -304,14 +304,19 @@
 </template>
 
 <script setup lang="ts">
-import { VueMonacoEditor } from "@guolao/vue-monaco-editor";
 import { Splitpanes, Pane } from "splitpanes";
 import type { Ref } from "vue";
 import type { SupportedLanguage } from "@code-practice/shared-types";
 
+// Lazy load Monaco editor - it's heavy
+const VueMonacoEditor = defineAsyncComponent(() =>
+  import("@guolao/vue-monaco-editor").then((m) => m.VueMonacoEditor)
+);
+
 definePageMeta({
   layout: "app",
   middleware: "auth",
+  ssr: false, // Skip SSR for this heavy interactive page
 });
 
 const route = useRoute();
@@ -331,11 +336,13 @@ interface ClientExercise {
 
 const {
   data: exercise,
-  pending,
+  status,
   error,
-} = await useFetch<ClientExercise>(
+} = useLazyFetch<ClientExercise>(
   `${config.public.apiBaseUrl}/library/${exerciseId}`
 );
+
+const pending = computed(() => status.value === "pending");
 
 type EditorLanguage = Extract<SupportedLanguage, "typescript" | "python">;
 const AVAILABLE_LANGUAGES: EditorLanguage[] = ["typescript", "python"];
