@@ -1,69 +1,36 @@
 ---
 type: "always_apply"
-description: "Example description"
+description: "Project overview and document routing"
 ---
 
-# Project Overview (High-Level)
+# Eggsecute
 
-This project is a **multi-language code execution, benchmarking, and learning platform** inspired by tools like CodeSignal or LeetCode, but designed primarily as a **systems-learning and performance-comparison tool**.
+A **distributed multi-language code execution platform** for learning and benchmarking. Users write solutions in multiple languages (TypeScript, Python, C++), run tests in parallel with live updates, and compare performance metrics.
 
-The core goal is to allow a user to:
+## Architecture (Brief)
 
-* Write and run solutions to programming problems in **multiple languages** (initially JavaScript/TypeScript, Python, and C++).
-* Execute the *same logical solution* across different runtimes.
-* Run test suites **in parallel** with **live progress updates**.
-* Compare **compile time, execution time, and memory usage** fairly across languages.
+| Plane | Tech | Role |
+|-------|------|------|
+| **Control** | Fastify + TS | Job orchestration, REST API, WebSocket hub |
+| **Execution** | FastAPI (Py), Fastify (Node), C++ | Isolated code runners, subprocess sandboxing |
+| **Presentation** | Nuxt 3 + Nuxt UI | Editor, live results, i18n |
 
-The system is intentionally designed as a **distributed execution platform** rather than a monolithic backend, in order to teach and exercise:
+Communication: REST for jobs, WebSocket for streaming events.
 
-* Systems design
-* Process isolation & sandboxing
-* Performance profiling
-* Cross-language execution semantics
+## Document Routing
 
----
+| Document | When to Fetch |
+|----------|---------------|
+| `architecture.md` | System design, adding services/executors, protocols, database schema |
+| `development.md` | Implementing features, code standards, quality gates, PR prep |
 
-## Core Architectural Idea
+The agent should update these documents when decisions are finalized or requirements change.
 
-The system is split into three conceptual layers:
+## Core Development Mandates
 
-1. **Control Plane** – orchestrates jobs, scheduling, aggregation, and client communication.
-2. **Execution Plane** – isolated language-specific executors (Python, Node.js, C++), each running user code in sandboxed subprocesses.
-3. **Presentation Plane** – a client (web or IDE) that submits jobs and receives live updates.
+These rules apply to ALL code changes:
 
-Communication uses:
-
-* **REST** for job control (submit, cancel, metadata)
-* **WebSockets** for streaming execution events and live test results
-
----
-
-## How to Use This Document
-
-This file (`description.md`) is **always included in context** when interacting with an agentic assistant.
-
-It should:
-
-* Stay **brief and stable**
-* Capture the *intent* and *shape* of the project
-* Avoid low-level details that may change frequently
-
-### When to Refer to `architecture.md`
-
-Refer to `architecture.md` when:
-
-* Discussing system design decisions
-* Implementing or modifying services
-* Adding new languages or executors
-* Working on performance, concurrency, or protocols
-
-### When to Modify `architecture.md`
-
-The agent **is allowed and encouraged to update `architecture.md`** when:
-
-* New requirements are discovered
-* Architectural decisions are refined
-* APIs or protocols are finalized
-* Tooling or integrations change
-
-Do **not** duplicate large sections of `architecture.md` into this file. Instead, evolve `architecture.md` as the living technical reference.
+1. **Types first** – Start in `shared-types`, then backend, then frontend
+2. **Self-review required** – After implementing, run lint/typecheck/test, consolidate duplicates, verify readability
+3. **i18n always** – No hardcoded user-facing strings
+4. **Fail gracefully** – Loading states, error states, user-friendly messages

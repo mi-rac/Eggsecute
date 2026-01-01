@@ -1,6 +1,6 @@
 ---
 type: "agent_requested"
-description: "efer to `architecture.md` when:  * Discussing system design decisions * Implementing or modifying services * Adding new languages or executors * Working on performance, concurrency, or protocols  ### When to Modify `architecture.md`  The agent **is allowed and encouraged to update `architecture.md`** when:  * New requirements are discovered * Architectural decisions are refined * APIs or protocols are finalized * Tooling or integrations change"
+description: "Refer to `architecture.md` when:  * Discussing system design decisions * Implementing or modifying services * Adding new languages or executors * Working on performance, concurrency, or protocols  ### When to Modify `architecture.md`  The agent **is allowed and encouraged to update `architecture.md`** when:  * New requirements are discovered * Architectural decisions are refined * APIs or protocols are finalized * Tooling or integrations change"
 ---
 
 # Architecture & Technical Notes
@@ -258,7 +258,140 @@ No changes should be required in the client.
 
 ---
 
-## 10. Evolution Guidelines
+## 10. Terminal Output Streaming
+
+### Architecture
+Executors capture subprocess stdout/stderr and stream them to the frontend via WebSocket.
+
+### Event Flow
+```
+Executor subprocess → stdout/stderr capture → WebSocket event → Control Plane → Frontend
+```
+
+### Event Type
+```typescript
+interface TerminalOutputEvent extends WebSocketEvent {
+  event: 'terminal_output';
+  data: {
+    stream: 'stdout' | 'stderr';
+    chunk: string;
+    timestamp: Date;
+  };
+}
+```
+
+### Implementation Notes
+- Use non-blocking I/O to capture subprocess output
+- Buffer small chunks (e.g., 100ms) to reduce WebSocket message frequency
+- Frontend should handle ANSI escape codes (strip or render)
+- Terminal output is ephemeral (not persisted to database)
+
+---
+
+## 11. Database Schema (Supabase)
+
+### Core Tables
+
+**exercises**
+| Column | Type | Notes |
+|--------|------|-------|
+| id | uuid | Primary key |
+| title | text | Required |
+| description | text | Markdown |
+| function_name | text | Entry point |
+| difficulty | enum | easy, medium, hard |
+| category | text | Optional grouping |
+| tags | text[] | Searchable tags |
+| input_schema | jsonb | JSON Schema |
+| output_schema | jsonb | JSON Schema |
+| test_cases | jsonb | Array of test cases |
+| images | text[] | Supabase Storage URLs |
+| hints | jsonb | Array of hint objects |
+| author_id | uuid | FK to auth.users |
+| is_published | boolean | Visibility |
+| created_at | timestamptz | Auto |
+| updated_at | timestamptz | Auto |
+
+**user_solutions**
+| Column | Type | Notes |
+|--------|------|-------|
+| id | uuid | Primary key |
+| user_id | uuid | FK to auth.users |
+| exercise_id | uuid | FK to exercises |
+| language | text | typescript, python, cpp |
+| code | text | User's solution |
+| is_submitted | boolean | Draft vs submitted |
+| created_at | timestamptz | Auto |
+| updated_at | timestamptz | Auto |
+
+**execution_history**
+| Column | Type | Notes |
+|--------|------|-------|
+| id | uuid | Primary key |
+| user_id | uuid | FK to auth.users |
+| exercise_id | uuid | FK to exercises |
+| solution_id | uuid | FK to user_solutions |
+| language | text | |
+| status | text | success, partial, failed |
+| metrics | jsonb | Timing, memory |
+| test_results | jsonb | Per-test outcomes |
+| created_at | timestamptz | Auto |
+
+### Row Level Security (RLS)
+- `exercises`: Public read if `is_published = true`, write restricted to author
+- `user_solutions`: Users can only read/write their own
+- `execution_history`: Users can only read their own
+
+### Type Generation
+```bash
+supabase gen types typescript --project-id <id> > packages/shared-types/src/database.ts
+```
+
+---
+
+## 12. LLM Integration (OpenAI)
+
+### Architecture
+LLM functionality is provided as a module within the Control Plane, not a separate service.
+
+### Capabilities
+1. **Hints** - Progressive hints for stuck users
+2. **Code Review** - Feedback on submitted solutions
+3. **Exercise Generation** - Create exercises from learning goals
+
+### API Design
+```
+POST /api/llm/hint
+POST /api/llm/review
+POST /api/llm/generate-exercise
+```
+
+### Security
+- Requires authentication
+- Rate limited: 10 requests/minute per user
+- API key stored in environment variable `OPENAI_API_KEY`
+- No user code sent to LLM without explicit consent
+
+### Prompt Management
+Prompts stored in `apps/control-plane/src/prompts/`:
+```
+prompts/
+  hint.ts          # Progressive hint generation
+  review.ts        # Code review feedback
+  exercise.ts      # Exercise generation
+```
+
+### Streaming
+Use Server-Sent Events (SSE) for streaming responses:
+```typescript
+// Frontend
+const eventSource = new EventSource('/api/llm/hint?exerciseId=...');
+eventSource.onmessage = (e) => appendToUI(e.data);
+```
+
+---
+
+## 13. Evolution Guidelines
 
 This document should be updated when:
 
@@ -267,5 +400,7 @@ This document should be updated when:
 * Benchmarking methodology evolves
 * Security or sandboxing decisions are refined
 * Frontend architecture or tooling changes
+* Database schema changes
+* New integrations are added
 
 Avoid storing purely cosmetic details here.
